@@ -121,7 +121,7 @@ body {
 	left: 60%;
 	top: 30%;
 	border-radius: 50%;
-	filter: blur(3px);
+	filter: blur(2px);
 	background-color: #ffffffdb;
 
 }
