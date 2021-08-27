@@ -1,0 +1,339 @@
+:root {
+	--color-background: hsl(0, 0%, 91%);
+	--color-content : rgb(0, 0, 0);
+	--color-road-tile: hsl(240, 3%, 18%);
+	--color-wall-tile: hsl(0, 0%, 100%);
+	--color-solid-shadow: hsl(0, 8%, 90%);
+	--color-link: rgb(47, 124, 225);
+
+	--color-icon: #000000;
+
+	--filter: invert(0);
+	color:#e97da1;
+}
+
+.dark-theme {
+	--color-background: hsl(240, 3%, 26%);
+	--color-content : rgb(255, 255, 255);
+	--color-road-tile: hsl(240, 3%, 18%);
+	--color-wall-tile: hsl(240, 3%, 40%);
+	--color-solid-shadow: hsl(240, 3%, 32%);
+	--color-link: rgb(142, 181, 253);
+
+	--color-icon: #ffffff;
+	
+	--filter: invert(100);
+}
+
+*{
+	box-sizing: border-box;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	background-color: var(--color-background);
+	color: var(--color-content);
+	transition: background-color 300ms;
+	font-family: monospace;
+}
+
+
+
+.container {
+	position: relative;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+
+
+
+/* L E V E L   I N F O ----------------------------*/
+.level-info {
+	font-size: 1.6rem;
+	font-weight: bold;
+	opacity: .7;
+}
+
+
+
+
+
+
+/* L E V E L --------------------------------------*/
+.level {
+	position: relative;
+	margin: 1rem;
+	display: grid;
+	width: 50vh;
+	border-radius: 1vh;
+	overflow: hidden;
+	box-shadow: 
+					0px 4px 0px 0px var(--color-solid-shadow),
+					1px 26px 30px 0px rgb(0 0 0 / 18%);
+}
+
+@media screen and (max-width:360px) {
+	.level{
+		transform-origin: bottom ;
+		transform: scale(0.8);
+	}
+}
+
+
+
+.ball {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: 0px;
+	top: 0px;
+	width: 86px;
+	aspect-ratio: 1/1;
+
+	--duration: 50ms;
+	transition: left var(--duration), top var(--duration), opacity 400ms;
+	opacity: 0;
+}
+.ball .circle {
+	position: relative;
+	width: 80%;
+	aspect-ratio: 1/1;
+	border-radius: 50%;
+	box-shadow:
+						inset 0px 0px 5px 3px rgb(255 255 255 / 78%), 
+						2px 2px 7px 0px rgb(0 0 0 / 35%);
+
+	background-color: rgb(255, 58, 216);
+	transition: box-shadow 50ms;
+}
+.ball .circle::after {
+	position: absolute;
+	content: "";
+	width: 20%;
+	height: 20%;
+	left: 60%;
+	top: 30%;
+	border-radius: 50%;
+	filter: blur(3px);
+	background-color: #ffffffdb;
+
+}
+
+
+
+.tile {
+	width: 100%;
+	aspect-ratio: 1/1;
+}
+
+.road-tile {
+	background-color: var(--color-road-tile);
+	transition: background-color 60ms;
+}
+.level.completed .road-tile {
+	animation: dance 500ms ease-out infinite;
+}
+
+.wall-tile {
+	background-color: var(--color-wall-tile);
+	transition: background-color 50ms;
+}
+
+
+@keyframes dance {
+	to {background-color: var(--color-road-tile);}
+}
+
+
+
+/* T O G G L E S ----------------------------------*/
+.top-icons {
+	position: absolute;
+	top: .5rem;
+	right: .5rem;
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+}
+.icon {
+	appearance:unset;
+	position: relative;
+	margin: 0;
+	padding: 0.3rem;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	--size : 1.6rem;
+	width: var(--size);
+	height: var(--size);
+	opacity: .75;
+	filter: var(--filter);
+	background-color: rgba(0, 0, 0, 0.075);
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+	border-radius: 50%;
+}.icon::before {
+	position: absolute;
+	font-family: monospace;
+	text-align: end;
+	content: "icon";
+	top: 50%;
+	right: 2rem;
+	opacity: 0;
+	transform: translate(10px,-50%);
+	transition: opacity 300ms, transform 200ms;
+	transition-delay: 0ms;
+	pointer-events: none;
+	color: var(--color-icon);
+	filter: var(--filter);
+}
+.icon:hover {
+	opacity: 1;
+}.icon:hover::before {
+	transition-delay: 800ms;
+	opacity: 1;
+	transform: translate(0,-50%);
+	pointer-events: all;
+}
+
+
+
+.dark-theme-toggle {
+	background-image: url(../assets/icons/sun.svg);
+}.dark-theme-toggle::before {
+	width: 12ch;
+	content: "Light theme";
+}
+.dark-theme-toggle:checked {
+	background-image: url(../assets/icons/moon.svg);
+}.dark-theme-toggle:checked::before {
+	content: "Dark theme ";
+}
+
+
+
+.ui-keys-toggle {
+	background-image: url(../assets/icons/keys-disabled.svg);
+}.ui-keys-toggle::before {
+	width: 16ch;
+	content: "UI keys disabled";
+}
+.ui-keys-toggle:checked {
+	background-image: url(../assets/icons/keys.svg);
+}.ui-keys-toggle:checked::before {
+	content: "UI keys enabled";
+}
+
+
+.reset-btn {
+	background-image: url(../assets/icons/reset.svg);
+}.reset-btn::before {
+	width: 14ch;
+	content: "Reset the game";
+}
+
+
+/* K E Y S --------------------------------------*/
+.keys {
+	width: 100%;
+	display: none;
+	margin-bottom: 2rem;
+}
+.keys.enabled {
+	display: block;
+}
+
+.keys .row{
+	display: flex;
+	justify-content: center;
+	--gap : 0.5rem;
+	gap: var(--gap);
+	margin-top: var(--gap);
+}
+
+.keys .btn {
+	width: 2.4rem;
+	height: 1.3rem;
+
+	position: relative;
+
+	-webkit-tap-highlight-color: transparent;
+	border: none;
+	outline: none;
+	background-color: var(--color-wall-tile);
+	cursor: pointer;
+	box-shadow: 
+			0px 2px 0px 0px var(--color-solid-shadow), 
+			1px 8px 8px 0px rgb(0 0 0 / 18%);
+	border-radius: 5px;
+
+	transition: transform 200ms, box-shadow 300ms;
+
+}
+.keys .btn::before {
+	position: absolute;
+	content: "";
+	inset: 0;
+	background-image: url(../assets/icons/arrow-right.svg);
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 40%;
+	opacity: 0.8;
+	filter: var(--filter);
+}
+.keys .btn-up::before { transform: rotate(-90deg); }
+.keys .btn-down::before { transform: rotate(90deg); }
+.keys .btn-left::before { transform: rotate(180deg); }
+
+.keys .btn:hover {
+	filter: brightness(0.97);
+}
+.keys .btn:active {
+	transform: translateY(-3px);
+	box-shadow: 
+			0px 2px 0px 0px var(--color-solid-shadow), 
+			1px 10px 9px 0px rgb(0 0 0 / 18%);
+	border-radius: 5px;
+}
+
+
+
+
+
+/* C R E D I T S ------------------------------------*/
+.credits {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	padding: 0.4rem 0.5rem;
+}
+.credits a {
+	color: var(--color-link);
+	font-family: monospace;
+}
+
+
+
+
+
+/* F A D E ------------------------------------*/
+.fade {
+	position: absolute;
+	inset: 0;
+	z-index: 1000;
+	background-color: var(--color-background);
+	transition: background-color 700ms;
+	transition-duration: 0;
+}

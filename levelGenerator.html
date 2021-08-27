@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Roller Splat Level Generator</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <style>
+      
+      *{
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding: 0;
+        margin: 0;
+        font-family: monospace;
+        background-color: #e4e4e4;
+      }
+
+
+
+      .container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 2rem;
+      }
+      .row {
+        width: 100%;
+      }
+      .controllers {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .num {
+        font-weight: bold;
+      }
+
+      .tiles-holder {
+        display: grid;
+        width: fit-content;
+        height: fit-content;
+        border: solid 1px rgb(0, 0, 0);
+      }
+
+      .tile {
+        appearance: unset;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 20px;
+        aspect-ratio: 1/1;
+        border: solid 1px rgb(0, 0, 0);
+        background-color: #fff;
+      }
+      .tile:checked { /*road*/
+        background-color: rgb(61, 61, 61);
+      }
+      .tile:disabled { /*border tile*/
+        cursor: not-allowed;
+      }
+      .tile:disabled::before { /*border tile*/
+        content: "×";
+        font-size: 1rem;
+        color: rgb(204, 204, 204);
+      }
+
+      .row:nth-child(2){
+        width: 80%;
+      }
+      .code {
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+        font-size: 0.6rem;
+      }
+    </style>
+	</head>
+
+	<body>
+
+		<div class="container">
+      <div class="row">
+        <div class="controllers">
+          <div>
+            Rows <span class="num rows">5</span><br>
+            <input class="range rows-input" type="range" min="5" max="20" value="5">
+          </div>
+          <div>
+            Columns <span class="num columns">5</span><br>
+            <input class="range columns-input" type="range" min="5" max="20" value="5">
+          </div>
+        </div>
+
+        <div class="tiles-holder"></div>
+      </div>
+      
+      <div class="row">
+        <textarea class="code"></textarea>
+      </div>
+		</div>
+
+    <script>
+      const tilesHolder  = document.querySelector(".tiles-holder")
+
+      const inputRows    = document.querySelector(".rows-input")
+      const inputColumns = document.querySelector(".columns-input")
+      
+      const numRows    = document.querySelector(".rows")
+      const numColumns = document.querySelector(".columns")
+      
+      const codeTextarea  = document.querySelector(".code")
+
+      inputRows.addEventListener("input", _=> numRows.innerText = inputRows.value)
+      inputColumns.addEventListener("input", _=> numColumns.innerText = inputColumns.value)
+
+
+      inputRows.addEventListener("change", drawTiles)
+      inputColumns.addEventListener("change", drawTiles)
+
+      let tiles
+      let rows, columns
+
+      drawTiles()
+      function drawTiles(){
+        rows    = inputRows.value
+        columns = inputColumns.value
+
+        removeTiles();
+
+        tiles = []
+        for (let i=0; i<rows; i++){
+          let tilesRow = []
+          for (let j=0; j<columns; j++){
+            let tile = document.createElement("input")
+            tile.setAttribute("type","checkbox")
+            tile.setAttribute("class","tile")
+            tile.setAttribute("data-i",i)
+            tile.setAttribute("data-j",j)
+
+            if (isBorderTile(i,j)){
+              tile.disabled = true
+              tilesRow = [...tilesRow, 1]
+            }else{
+              tile.checked = true
+              tilesRow = [...tilesRow, 0]
+            }
+
+
+            tilesHolder.appendChild(tile)
+          }
+          tiles = [...tiles, tilesRow]
+        }
+        
+
+        tilesHolder.style.gridTemplateRows    = `repeat(${rows}, 1fr)`
+        tilesHolder.style.gridTemplateColumns = `repeat(${columns}, 1fr)`
+      }
+
+      function isBorderTile(i, j){
+        return i==0 || j==0 || i==rows-1 || j==columns-1
+      }
+
+      function removeTiles(){
+        while (tilesHolder.firstChild)
+          tilesHolder.removeChild(tilesHolder.firstChild)
+      }
+
+
+      tilesHolder.addEventListener("click", e=>{
+        if (e.target.classList.contains("tile")){
+          let i = parseInt(e.target.getAttribute("data-i"))
+          let j = parseInt(e.target.getAttribute("data-j"))
+          tiles[i][j] = (e.target.checked)?0:1
+          
+          codeTextarea.value = generateCodeString()
+        }
+      })
+
+      function generateCodeString(){
+          let code = "[\n\t"
+
+          for (let i=0; i<rows; i++){
+            code += "["
+            for (let j=0; j<columns; j++){
+              code += tiles[i][j]
+              if (j<columns-1)
+                code += ","
+            }
+            code += (i<rows-1)?"],\n\t":"]\n"
+          }
+          code += "],"
+
+          return code
+      }
+
+    </script>
+
+	</body>
+
+
+
+</html>
+
